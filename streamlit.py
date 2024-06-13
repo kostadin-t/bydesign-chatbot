@@ -1,6 +1,6 @@
 #Imports
 from langchain.chains import ConversationalRetrievalChain
-from langchain_community.llms import Bedrock
+from langchain_aws import ChatBedrock
 from langchain_community.retrievers import AmazonKnowledgeBasesRetriever
 import streamlit as st
 from langchain.memory import ConversationBufferMemory
@@ -21,11 +21,11 @@ retriever = AmazonKnowledgeBasesRetriever(
 model_kwargs_claude = {
   "temperature" : 0,
   "top_k" : 10,
-  "max_tokens_to_sample" : 750
+  # "max_tokens_to_sample" : 750
 }
 
 #Configure llm
-llm = Bedrock(model_id="anthropic.claude-instant-v1", model_kwargs=model_kwargs_claude)
+llm = ChatBedrock(model_id="anthropic.claude-3-haiku-20240307-v1:0", model_kwargs=model_kwargs_claude)
 
 #Set up message history
 msgs = StreamlitChatMessageHistory(key = "langchain_messages")
@@ -37,7 +37,7 @@ if len(msgs.messages) == 0:
 my_template = """
 Human: 
     You are a conversational assistant designed to help answer questions from a knowledge base about the ERP system SAP Business ByDesign. 
-    Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer. 
+    Always answer in English. Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer. 
 
 {context}
 
