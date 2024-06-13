@@ -13,7 +13,7 @@ st.title("SAP ByDesign Chat Bot")
 
 #Define the retriever
 retriever = AmazonKnowledgeBasesRetriever(
-    knowledge_base_id="2EV4U0BIV0",
+    knowledge_base_id="U4ZDW2NQH2",
     retrieval_config={"vectorSearchConfiguration": {"numberOfResults": 4}},
 )
 
@@ -36,8 +36,8 @@ if len(msgs.messages) == 0:
 #Creating the template   
 my_template = """
 Human: 
-    You are a conversational assistant designed to help answer questions from a knowledge base. 
-    Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer. Keep the answer as concise as possible. 
+    You are a conversational assistant designed to help answer questions from a knowledge base about the ERP system SAP Business ByDesign. 
+    Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer. 
 
 {context}
 
