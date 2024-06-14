@@ -7,6 +7,8 @@ from langchain.memory import ConversationBufferMemory
 from langchain_community.chat_message_histories import StreamlitChatMessageHistory
 from langchain.prompts.prompt import PromptTemplate
 from langchain.chains.conversational_retrieval.prompts import CONDENSE_QUESTION_PROMPT
+from langchain_community.callbacks.manager import get_bedrock_anthropic_callback
+
 #Configure streamlit app
 st.set_page_config(page_title="SAP ByDesign Chat Bot")
 st.title("SAP ByDesign Chat Bot")
@@ -19,13 +21,13 @@ retriever = AmazonKnowledgeBasesRetriever(
 
 #Define model parameters
 model_kwargs_claude = {
-  "temperature" : 0,
+  "temperature" : 0.1,
   "top_k" : 10,
-  # "max_tokens_to_sample" : 750
+  # "max_tokens": 2048,
 }
 
 #Configure llm
-llm = ChatBedrock(model_id="anthropic.claude-3-haiku-20240307-v1:0", model_kwargs=model_kwargs_claude)
+llm = ChatBedrock(model_id="anthropic.claude-instant-v1", model_kwargs=model_kwargs_claude)
 
 #Set up message history
 msgs = StreamlitChatMessageHistory(key = "langchain_messages")
@@ -73,10 +75,10 @@ if prompt := st.chat_input():
   st.chat_message("human").write(prompt)
 
   #Invoke the model
-  output = qa.invoke({
-    'question': prompt,
-    'chat_history': memory.load_memory_variables({})
-  })
-    
-  #display the output
-  st.chat_message("ai").write(output['answer'])  
+  with get_bedrock_anthropic_callback() as cb:  
+    response = qa.invoke({
+      'question': prompt,
+      'chat_history': memory.load_memory_variables({})
+    })
+    st.chat_message("ai").write(response['answer'])  
+    print(cb)
